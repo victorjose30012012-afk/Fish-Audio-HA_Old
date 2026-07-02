@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import logging
 from typing import Any
 
 import voluptuous as vol
@@ -17,6 +16,9 @@ from homeassistant.helpers.selector import (
     SelectSelector,
     SelectSelectorConfig,
     SelectSelectorMode,
+    TextSelector,
+    TextSelectorConfig,
+    TextSelectorType,
 )
 
 from .const import (
@@ -44,9 +46,6 @@ from .const import (
     TTS_MODELS,
     CONF_VOLUME,
 )
-from .exceptions import FishAudioError
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class FishAudioOptionsFlow(OptionsFlow):
@@ -55,7 +54,6 @@ class FishAudioOptionsFlow(OptionsFlow):
     def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize the options flow."""
         self._config_entry = config_entry
-        self._voices: list[SelectOptionDict] = []
 
     async def async_step_init(
         self,
@@ -65,40 +63,15 @@ class FishAudioOptionsFlow(OptionsFlow):
         errors: dict[str, str] = {}
         options = {**self._defaults(), **self._config_entry.options}
 
-        if not self._voices:
-            try:
-                api = self._config_entry.runtime_data.api
-                voices = await api.async_list_voices(page_size=100)
-                self._voices = [
-                    SelectOptionDict(value=voice.id, label=voice.label)
-                    for voice in voices
-                ]
-            except FishAudioError as exc:
-                _LOGGER.debug("Could not load Fish Audio voices: %s", exc)
-                errors["base"] = "cannot_connect"
-            except Exception:
-                _LOGGER.exception("Unexpected error loading Fish Audio voices")
-                errors["base"] = "unknown"
-
         if user_input is not None and not errors:
             return self.async_create_entry(title="", data=user_input)
-
-        voice_options = self._voices or [
-            SelectOptionDict(
-                value=str(options.get(CONF_VOICE, "")),
-                label=str(options.get(CONF_VOICE, "Enter voice id")),
-            )
-        ]
         schema = vol.Schema(
             {
                 vol.Required(
-                    CONF_VOICE,
-                    default=options.get(CONF_VOICE, ""),
-                ): SelectSelector(
-                    SelectSelectorConfig(
-                        options=voice_options,
-                        mode=SelectSelectorMode.DROPDOWN,
-                        custom_value=True,
+                    CONF_VOICE, default=options.get(CONF_VOICE, "")
+                ): TextSelector(
+                    TextSelectorConfig(
+                        type=TextSelectorType.TEXT,
                     )
                 ),
                 vol.Required(

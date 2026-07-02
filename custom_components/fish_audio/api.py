@@ -103,7 +103,7 @@ class FishAudioAPI:
             "page_size": page_size,
             "page_number": 1,
             "sort_by": "task_count",
-            "self": self_only,
+            "self": "true" if self_only else "false",
         }
         if language:
             params["language"] = language
