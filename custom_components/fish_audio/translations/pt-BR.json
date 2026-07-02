@@ -1,0 +1,46 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Fish Audio",
+        "description": "Informe sua chave de API da Fish Audio. Crie ou gerencie chaves em {api_keys_url}.",
+        "data": {
+          "api_key": "Chave de API"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "A chave de API e invalida.",
+      "cannot_connect": "Nao foi possivel conectar a Fish Audio. Tente novamente mais tarde.",
+      "unknown": "Erro inesperado."
+    },
+    "abort": {
+      "already_configured": "A Fish Audio ja esta configurada."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcoes da Fish Audio",
+        "description": "Escolha a voz padrao e as configuracoes de sintese.",
+        "data": {
+          "voice": "Voz",
+          "model": "Modelo",
+          "language": "Idioma",
+          "speed": "Velocidade",
+          "pitch": "Tom",
+          "volume": "Volume",
+          "streaming": "Streaming",
+          "audio_format": "Formato do audio",
+          "latency": "Latencia",
+          "sample_rate": "Taxa de amostragem"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nao foi possivel carregar as vozes da Fish Audio.",
+      "unknown": "Erro inesperado."
+    }
+  }
+}
+

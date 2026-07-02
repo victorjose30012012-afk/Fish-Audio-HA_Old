@@ -1,0 +1,5 @@
+clear_cache:
+  fields: {}
+  name: Clear cache
+  description: Remove cached Fish Audio TTS files.
+

@@ -1,0 +1,4 @@
+black==26.3.0
+homeassistant==2025.11.3
+mypy==1.17.0
+ruff==0.13.0

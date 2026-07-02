@@ -1,0 +1,46 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Fish Audio",
+        "description": "Enter your Fish Audio API key. Create or manage keys at {api_keys_url}.",
+        "data": {
+          "api_key": "API key"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "The API key is invalid.",
+      "cannot_connect": "Could not connect to Fish Audio. Try again later.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "Fish Audio is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Fish Audio options",
+        "description": "Choose the default voice and synthesis settings.",
+        "data": {
+          "voice": "Voice",
+          "model": "Model",
+          "language": "Language",
+          "speed": "Speed",
+          "pitch": "Pitch",
+          "volume": "Volume",
+          "streaming": "Streaming",
+          "audio_format": "Audio format",
+          "latency": "Latency",
+          "sample_rate": "Sample rate"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not load Fish Audio voices.",
+      "unknown": "Unexpected error."
+    }
+  }
+}
+

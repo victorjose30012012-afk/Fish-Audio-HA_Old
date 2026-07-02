@@ -1,0 +1,8 @@
+{
+  "name": "Fish Audio",
+  "content_in_root": false,
+  "render_readme": true,
+  "domains": ["tts"],
+  "homeassistant": "2025.11.3"
+}
+
