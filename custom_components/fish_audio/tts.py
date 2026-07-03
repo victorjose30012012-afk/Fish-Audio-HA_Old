@@ -26,7 +26,6 @@ from .const import (
     DEFAULT_AUDIO_FORMAT,
     DEFAULT_LANGUAGE,
     DEFAULT_MODEL,
-    DEFAULT_STREAMING,
     DOMAIN,
     MANUFACTURER,
     NAME,
@@ -56,8 +55,8 @@ async def async_setup_entry(
 class FishAudioTTSEntity(TextToSpeechEntity):
     """Fish Audio TTS entity."""
 
-    _attr_has_entity_name = True
-    _attr_name = None
+    _attr_has_entity_name = False
+    _attr_name = NAME
     _attr_unique_id = f"{DOMAIN}_tts"
     _attr_supported_options = [
         CONF_VOICE,
@@ -131,39 +130,19 @@ class FishAudioTTSEntity(TextToSpeechEntity):
         request: TTSAudioRequest,
     ) -> TTSAudioResponse:
         """Generate speech from an incoming text stream."""
-        synthesis_options = self._merged_options(request.language, request.options)
-        audio_format = str(
-            synthesis_options.get(CONF_AUDIO_FORMAT, DEFAULT_AUDIO_FORMAT)
+        message = await _collect_message(request.message_gen)
+        extension, data = await self.async_get_tts_audio(
+            message,
+            request.language,
+            request.options,
         )
-        if not synthesis_options.get(CONF_STREAMING, DEFAULT_STREAMING):
-            message = await _collect_message(request.message_gen)
-            audio = await self.async_get_tts_audio(
-                message,
-                request.language,
-                request.options,
-            )
-            extension, data = audio
-            if extension is None or data is None:
-                raise HomeAssistantError("Fish Audio returned no audio")
+        if extension is None or data is None:
+            raise HomeAssistantError("Fish Audio returned no audio")
 
-            async def _single() -> AsyncGenerator[bytes]:
-                yield data
+        async def _single() -> AsyncGenerator[bytes]:
+            yield data
 
-            return TTSAudioResponse(extension=extension, data_gen=_single())
-
-        async def _stream() -> AsyncGenerator[bytes]:
-            try:
-                async for chunk in self._api.async_stream_audio(
-                    request.message_gen,
-                    synthesis_options,
-                ):
-                    yield chunk
-            except FishAudioValidationError as exc:
-                raise ServiceValidationError(str(exc)) from exc
-            except FishAudioError as exc:
-                raise HomeAssistantError(f"Fish Audio streaming failed: {exc}") from exc
-
-        return TTSAudioResponse(extension=audio_format, data_gen=_stream())
+        return TTSAudioResponse(extension=extension, data_gen=_single())
 
     def _merged_options(
         self,
